@@ -4,7 +4,7 @@ import string
 import math
 import streamlit as st
 
-df = pd.read_csv('nyc-jobs-1.csv')[['Job ID','Agency','Business Title','Salary Range From','Salary Range To','Job Description','Minimum Qual Requirements','Preferred Skills']].drop_duplicates().head(500)
+df = pd.read_csv('nyc-jobs-1.csv')[['Job ID','Agency','Business Title','Salary Range From','Salary Range To','Job Description','Minimum Qual Requirements','Preferred Skills']].drop_duplicates().head(250)
 df.fillna('')
 @st.cache
 def rec_list(df):
