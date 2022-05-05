@@ -13,7 +13,7 @@ def rec_list(df):
         v2 = np.array(list(y.values()))
         return(np.dot(v1, v2)/(np.linalg.norm(v1)*np.linalg.norm(v2)))
     def get_rec(vacancy):
-        vac_list = df['Job ID'][df['Job ID'] != vacancy]
+        vac_list = set(df['Job ID'][df['Job ID'] != vacancy])
         top = dict()
         for vac in vac_list:
             top[vac] = cos(TF_IDF[vacancy], TF_IDF[vac])
