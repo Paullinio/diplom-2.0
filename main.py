@@ -93,7 +93,84 @@ def ui2(df):
             if count == 5: break
 
 
-ui2(df)
+def UI(df):
+	def change_window(current_state, input_id):
+		try:
+			st.session_state['current_input'] = st.session_state.input
+		except:
+			pass
+		st.session_state['current_state'] = current_state
+		st.session_state['current_job'] = input_id
+	if 'current_state' not in st.session_state:
+		st.session_state['current_state'] = 'welcome_window'
+	if 'current_job' not in st.session_state:
+		st.session_state['current_job'] = 0
+	if 'current_input' not in st.session_state:
+		st.session_state['current_input'] = ''
+	top = rec_list(df)
+	dataset = st.container()
+	with dataset:
+		#st.write(st.session_state)
+		if st.session_state['current_state'] == 'welcome_window':
+			st.header('Job searcher')
+			st.subheader('This is where yo can find the job of your dream')
+			with st.container():
+				input_col, search_col = st.columns([6,1])
+				with input_col:
+					input_text = st.text_input('Your dream job', key = 'input', on_change = change_window, args = ['list_of_jobs', st.session_state['current_job']])
+		elif st.session_state['current_state'] == 'list_of_jobs':
+			
+			with st.container():
+				with st.container():
+					input_col, back_col = st.columns([9,4])
+					with input_col:
+						input_text = st.text_input('Your dream job', st.session_state['current_input'], key = 'input', on_change = change_window, args = ['list_of_jobs', st.session_state['current_job']])
+						st.session_state['current_input'] = input_text 
+					with back_col:
+						st.text('Go back')
+						back_butt = st.button('Back to homescreen', on_click = change_window, args = ['welcome_window', st.session_state['current_job']])
+			find_smth = False
+			for index, row in df.iterrows():
+				if input_text.lower() in row['Business Title'].lower() or input_text.lower() in row['Agency'].lower():
+					with st.form(key = 'search_job' + str(index)):
+							st.header(row['Business Title'])
+							st.subheader(row['Agency'])
+							st.form_submit_button('See more', on_click = change_window, args = ['job', row['Job ID']])
+					find_smth = True
+			if not find_smth:
+				st.header('Oops! ☹️')
+				st.subheader('Sorry, we could not find ' + input_text + ' for you. Try something else')
+				if input_text.lower() == 'gay porn' or input_text.lower() == 'гей порно' or input_text.lower() == 'gachi' or input_text.lower() == 'гачи':
+					st.text('Це вже по нашому! Welcome to the club, buddy! 💪')
+
+				elif sum([word in input_text.lower() for word in ['cock', 'dick', 'pussy', 'penis', 'porn', 'хуй', 'пизда', 'залупа', 'вагина', 'ебать', 'порно',  'жопа', 'дупа']]):
+					st.text('І не соромно тобі тут таке шукати?')
+		
+		elif st.session_state['current_state'] == 'job':
+			current_job = df[df['Job ID'] == st.session_state['current_job']].iloc[0]
+			st.title(current_job['Business Title'])
+			st.subheader(current_job['Agency'])
+			st.subheader('Salary: ' + str(current_job['Salary Range From']) + ' - ' + str(current_job['Salary Range To']))
+			st.header('Description')
+			with st.container():
+				st.write(current_job['Job Description'])
+			st.header('Requirements')
+			with st.container():
+				st.write(current_job['Minimum Qual Requirements'])
+			st.header('Similar vacancies')
+			for job in top[current_job['Job ID']][:5]:
+				with st.form(key = 'top_job' + str(job)):
+					st.header(df[df['Job ID'] == job].iloc[0]['Business Title'])
+					st.subheader(df[df['Job ID'] == job].iloc[0]['Agency'])
+					st.form_submit_button('See more', on_click = change_window, args = ['job', job])
+			
+			back_butt = st.button('Back to list', key = 'search_form' , on_click = change_window, args = ['list_of_jobs', st.session_state['current_job']])
+
+
+
+UI(df)
+
+
 
 
 
