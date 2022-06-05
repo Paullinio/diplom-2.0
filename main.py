@@ -113,7 +113,7 @@ def UI(df):
 		#st.write(st.session_state)
 		if st.session_state['current_state'] == 'welcome_window':
 			st.header('Job searcher')
-			st.subheader('This is where yo can find the job of your dream')
+			st.subheader('This is where you can find the job of your dream')
 			with st.container():
 				input_col, search_col = st.columns([6,1])
 				with input_col:
